@@ -1,0 +1,2 @@
+[Thu Jun 20 22:15:53.154385 2019] [php7:error] [pid 9104:tid 1192] [client 127.0.0.1:61134] PHP Fatal error:  Class 'App\\Http\\Controllers\\Controller' not found in D:\\laravel\\weblaravel\\app\\Http\\Controllers\\Controller.php on line 7
+[Thu Jun 20 22:15:54.827780 2019] [php7:error] [pid 9104:tid 1200] [client 127.0.0.1:61135] PHP Fatal error:  Class 'App\\Http\\Controllers\\Controller' not found in D:\\laravel\\weblaravel\\app\\Http\\Controllers\\Controller.php on line 7
