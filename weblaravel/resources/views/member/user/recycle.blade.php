@@ -12,22 +12,22 @@
 <body>
 <div class="container">
     <div>
-    {{$data->appends(request()->except(['page']))->links()}}
+
     </div>
     <div class="input-group mb-3">
         <form action="{{route('member.user.index')}}" method="get">
             <input type="text" class="form-control" placeholder="搜索" aria-label="Recipient's username"
                    aria-describedby="basic-addon2" name="lw">
 
-                <input type="submit" class="btn btn-outline-secondary" value="提交">
+            <input type="submit" class="btn btn-outline-secondary" value="提交">
 
         </form>
     </div>
     <div>
-        <a href="{{route('member.user.create')}}" class="btn btn-success">添加用户</a>
+
         <a href="#" class="btn btn-danger" id="delall">全部删除</a>
         <input type="button" value="删除" onclick="jqchk()" class="btn btn-danger">
-        <a href="{{route('member.user.show')}}" class="btn btn-danger" >回收站</a>
+        <a href="{{route('member.user.index')}}" class="btn btn-danger" >返回</a>
     </div>
     <table class="table table-bordered table-dark">
         <thead>
@@ -53,8 +53,9 @@
                 <td>{{$item->user_email}}</td>
                 <td>{{$item->create_time}}</td>
                 <td>
-                    <a href="{{route('member.user.update',['id'=>$item->id])}}" class="btn btn-danger">修改</a>
-                    <a href="{{route('member.user.del',['id'=>$item->id])}}" class="btn btn-danger" id="cli">删除</a>
+
+                    <a href="{{route('member.user.really',['id'=>$item->id])}}" class="btn btn-danger" id="cli">删除</a>
+                    <a href="{{route('member.user.recover',['id'=>$item->id])}}" class="btn btn-danger" id="demo22">恢复</a>
 
                 </td>
             </tr>
@@ -70,7 +71,7 @@
 <script src="/js/app.js"></script>
 <script>
     $('#cli').click(function (event) {
-        alert(12);
+
         event.preventDefault();
         let url = $('#cli').attr('href');
         console.log(url);
@@ -138,6 +139,7 @@
 
 
     }
+
 
 </script>
 </body>

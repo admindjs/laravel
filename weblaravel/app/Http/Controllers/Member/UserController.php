@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Member;
 //use validate;
-use DB;
+use App\models\user;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use Mail;
 class UserController extends Controller
 {
     //显示列表
@@ -13,15 +13,18 @@ class UserController extends Controller
     {
         $kw = $request->get('lw');
 
-        $data = DB::table('users')->when($kw, function ($query) use ($kw) {
+        $data = user::when($kw, function ($query) use ($kw) {
             $query->where('username', 'like', "%{$kw}%");
-        })->get();
-//var_dump(count($data));
-        for ($i = 0; $i < count($data); $i++) {
-            $time = $data[$i]->create_time;
-            $create_time = date('Y-m-d H:i:s', $time);
-            $data[$i]->create_time = $create_time;
-        }
+        })->paginate(2);
+
+  if(count($data)>0){
+      for ($i = 0; $i < count($data); $i++) {
+          $time = $data[$i]->create_time;
+          $create_time = date('Y-m-d H:i:s', $time);
+          $data[$i]->create_time = $create_time;
+      }
+  }
+
 
 
         return view('member.user.index', compact('data'));
@@ -49,15 +52,20 @@ class UserController extends Controller
         $this->validate($request, $rule);
         $post = $request->except(['_token', 'passwords']);
         $post['create_time'] = time();
-        DB::table('users')->insert($post);
+        user::insert($post);
+        // 发送邮件
+//        Mail::raw('开通账号成功，请速联系管理员',function($message){
+//            $message->to('1344557966@qq.com');
+//            $message->subject('开通账号提示');
+//        });
         return redirect(route('member.user.index'));
     }
 
     //修改显示
     public function update(int $id)
     {
-//        var_dump(24);
-        $data = DB::table('users')->where('id', $id)->first();
+
+        $data = user::where('id', $id)->first();
         return view('member.user.edit', compact('data'));
     }
 
@@ -74,7 +82,7 @@ class UserController extends Controller
 
         $this->validate($request, $rule);
         $post = $request->except(['_token', '_method']);
-        DB::table('users')->where('id', $id)->update($post);
+        user::where('id', $id)->update($post);
         return redirect(route('member.user.index'));
 
     }
@@ -84,9 +92,9 @@ class UserController extends Controller
     {
          $ids=$request->get('ids');
          if($ids!=''){
-             $data = DB::table('users')->whereIn('id',$ids)->delete();
+             $data = user::whereIn('id',$ids)->delete();
          }else{
-             $data = DB::table('users')->where('id',$id)->delete();
+             $data = user::where('id',$id)->delete();
          }
 
         if ($data) {
@@ -99,11 +107,36 @@ class UserController extends Controller
     {
         $ids=$request->get();
         var_dump($ids);
-        $data = DB::table('users')->delete();
+        $data = user::delete();
         if ($data) {
             return ['status' => '0', 'msg' => '删除成功'];
         }
 
 
+    }
+    public function recover(int $id){
+//        return 11324;
+
+//        恢复成功
+        $ref=user::onlyTrashed()->where('id',$id)->restore();
+  if($ref){
+      $data=user::onlyTrashed()->get();
+
+      return view('member.user.recycle',compact('data'));
+  }
+    }
+    public function show(){
+        $data=user::onlyTrashed()->get();
+
+        return view('member.user.recycle',compact('data'));
+    }
+    public function really(int $id){
+//        return $id;
+        $ret=user::where('id',$id)->forceDelete();
+        if($ret){
+            return ['status' => '0', 'msg' => '彻底删除成功'];
+        }
+
+//        return view('member.user.recycle',compact('data'));
     }
 }
